@@ -19,6 +19,7 @@ package controller
 import (
 	"context"
 
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -47,9 +48,17 @@ type WebappReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.23.3/pkg/reconcile
 func (r *WebappReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = logf.FromContext(ctx)
+	logs := logf.FromContext(ctx)
+	webapp := &corev1.Webapp{}
+	if err := r.Get(ctx, req.NamespacedName, webapp); err != nil {
+		if apierrors.IsNotFound(err) {
+			logs.Info("Webapp does not exist", "name", req.Name, "namespace", req.Namespace)
+			return ctrl.Result{}, nil
+		}
+		return ctrl.Result{}, err
+	}
 
-	// TODO(user): your logic here
+	logs.Info("Webapp exists", "name", webapp.Name, "namespace", webapp.Namespace, "replicas", webapp.Spec.Replicas, "image", webapp.Spec.Image, "context", webapp.Spec.Context)
 
 	return ctrl.Result{}, nil
 }
