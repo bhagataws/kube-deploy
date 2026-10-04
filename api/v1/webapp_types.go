@@ -32,7 +32,10 @@ type WebappSpec struct {
 
 	// foo is an example field of Webapp. Edit webapp_types.go to remove/update
 	// +optional
-	Foo *string `json:"foo,omitempty"`
+
+	Image    string `json:"image"`
+	Replicas int32  `json:"replicas,omitempty"`
+	Context  string `json:"context,omitempty"`
 }
 
 // WebappStatus defines the observed state of Webapp.
@@ -60,6 +63,12 @@ type WebappStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+// +kubebuilder:resource:shortName=wa
+// +kubebuilder:printcolumn:name="Image",type=string,JSONPath=".spec.image"
+// +kubebuilder:printcolumn:name="Replicas",type=integer,JSONPath=".spec.replicas"
+// +kubebuilder:printcolumn:name="Context",type=string,JSONPath=".spec.context"
+// +kubebuilder:printcolumn:name="Ready",type=string,JSONPath=".status.conditions[?(@.type=='Ready')].status"
+// +kubebuilder:printcolumn:name="Age",type=date,JSONPath=".metadata.creationTimestamp"
 
 // Webapp is the Schema for the webapps API
 type Webapp struct {
