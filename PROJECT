@@ -8,4 +8,14 @@ layout:
 - go.kubebuilder.io/v4
 projectName: kube-deploy
 repo: github.com/bhagataws/kube-deploy.git
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: cafeco.in
+  group: core
+  kind: Webapp
+  path: github.com/bhagataws/kube-deploy.git/api/v1
+  version: v1
 version: "3"
